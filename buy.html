@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#b45309">
+<title>Buy RasoiOne</title>
+<link rel="stylesheet" href="/site.css">
+<script src="/config.js"></script>
+</head>
+<body>
+<div class="wrap narrow">
+  <nav class="site"><a class="logo" href="/">Rasoi<span>One</span></a><div class="links"><a href="/#plans">Plans</a><a href="#" data-wa>Support</a></div></nav>
+
+    <main id="buyForm">
+    <h1 style="margin:10px 0 4px">Buy RasoiOne once</h1>
+    <p class="muted" style="margin:0 0 14px">Pay once — the licence never ends. Billing, KOT, khata, GST, reports and backups work forever, even without internet. Every licence includes 1 year of online services (QR table menu &amp; orders, phone–computer sync, updates, WhatsApp support); after that they are optional. Prices include GST. Secure checkout by Razorpay (UPI, cards, net banking). Want to try first? Install the app: the first 7 days are free.</p>
+
+    <div class="seg" role="radiogroup" aria-label="What do you want to pay for" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button type="button" class="btn" data-mode="buy" role="radio">Buy the licence</button>
+      <button type="button" class="btn ghost" data-mode="renew" role="radio">Renew online services</button>
+    </div>
+
+    <div id="buyBox">
+      <div id="plans" role="radiogroup" aria-label="Choose a plan"></div>
+      <label class="choice" style="margin-top:6px"><input type="checkbox" id="keyBox"> <span>I have a free-trial key or an old monthly/yearly key — buy for that key (it stays the same)</span></label>
+      <div id="keyRow" hidden>
+        <label for="licKey">Your RasoiOne licence key <small>(More → Plans in the app shows it)</small></label>
+        <input class="field" id="licKey" autocomplete="off" maxlength="60" placeholder="RS1-XXXX-XXXX-XXXX">
+      </div>
+    </div>
+
+    <div id="renewBox" hidden>
+      <div class="card">
+        <b>Online services · 1 year</b>
+        <p class="muted" style="margin:6px 0 0">Table QR menu &amp; QR orders, phone–computer and Google Drive sync, app updates and WhatsApp support. Billing never stops without them.</p>
+        <p style="margin:8px 0 0" id="svPrices">Dukaan ₹149 · Restaurant ₹199 · Restaurant + Desktop ₹249 · older Lifetime keys ₹199 — a year.</p>
+        <p class="muted" style="margin:6px 0 0;font-size:.9rem">The year is added after your current end date (or from today if it has ended).</p>
+      </div>
+      <label for="svKey">Your RasoiOne licence key <small>(More → Plans in the app shows it)</small></label>
+      <input class="field" id="svKey" autocomplete="off" maxlength="60" placeholder="RS1-XXXX-XXXX-XXXX">
+    </div>
+
+    <label for="name">Shop name</label>
+    <input class="field" id="name" autocomplete="organization" maxlength="60">
+    <label for="phone">Mobile number <small>(for support)</small></label>
+    <input class="field" id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="16">
+    <label for="email">Email <small>(we send your key here too)</small></label>
+    <input class="field" id="email" type="email" autocomplete="email" maxlength="80">
+    <div id="refRow">
+      <label for="refCode">Referral code <small>(optional — <span id="refAmt">30</span> extra days of online services)</small></label>
+      <input class="field" id="refCode" autocomplete="off" maxlength="12" placeholder="e.g. RAB3KQ" style="text-transform:uppercase">
+      <div id="refMsg" class="muted" style="font-size:.9rem;margin-top:4px"></div>
+    </div>
+    <div id="err" class="err" role="alert" hidden></div>
+    <p><button class="btn" id="payBtn" type="button" style="width:100%;margin-top:18px">Pay</button></p>
+    <p class="muted" style="font-size:.88rem">By paying you agree to the <a href="/terms.html">terms</a> and <a href="/refund.html">refund policy</a>. We never see your card or UPI details.</p>
+  </main>
+
+  <main id="done" class="success" hidden>
+    <h1 style="margin:16px 0 4px" id="doneTitle">🎉 Payment successful</h1>
+    <p class="muted">Your licence key:</p>
+    <div class="keybox" id="theKey"></div>
+    <p><button class="btn" id="copyBtn" type="button">Copy key</button></p>
+    <p id="untilLine" style="font-weight:600"></p>
+    <div class="card" style="text-align:left;margin-top:20px">
+      <h3>How to use it in the app</h3>
+      <ol class="steps">
+        <li>Open the <b>RasoiOne</b> app on the phone or computer you bill on.</li>
+        <li>Go to <b>More → Plans</b>.</li>
+        <li id="stepNew">Tap <b>Enter licence key</b>, paste the key and tap <b>Activate</b>.</li>
+        <li id="stepRenew" hidden>Already activated? The app picks up the change by itself within a few hours, or tap <b>Check licence now</b> on Plans.</li>
+      </ol>
+      <p id="refLine" hidden>Your own referral code: <b id="myRef"></b> — shops that buy with it get 30 extra days of online services, and you earn a share of their first payment, paid to your UPI.</p>
+      <p class="muted" style="font-size:.9rem">Save this key (take a screenshot). Payment id: <span id="payId"></span></p>
+    </div>
+  </main>
+
+  <footer class="site"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/refund.html">Refunds</a><a href="/delete-data.html">Delete my data</a></footer>
+</div>
+
+<script>
+(function () {
+  var C = window.RASOI || {};
+  var $ = function (id) { return document.getElementById(id); };
+  var waUrl = function (text) { return 'https://wa.me/' + String(C.supportWhatsApp || '').replace(/\D/g, '') + '?text=' + encodeURIComponent(text); };
+  document.querySelectorAll('[data-wa]').forEach(function (a) { a.href = waUrl('Hi RasoiOne, I need help with my licence'); a.target = '_blank'; });
+
+  // Default prices (one-time licence, GST included); live prices from the licence server replace these.
+  var PLANS = {
+    standard: { label: 'Dukaan', price: 999, mrp: 1999, services: 149, note: '1 device · billing, reports, GST, customers, offers, khata' },
+    pro: { label: 'Restaurant', price: 2499, mrp: 4999, services: 199, note: '1 device · tables, KOT, Swiggy & Zomato, stock, staff' },
+    combo: { label: 'Restaurant + Desktop', price: 3999, mrp: 7999, services: 249, note: '2 devices (phone + Windows/Mac) · everything in Restaurant' },
+  };
+  var SERVICES = { standard: 149, pro: 199, combo: 249, lifetime: 199, founder: 199 };
+  var ORDER = ['standard', 'pro', 'combo'];
+  var params = new URLSearchParams(location.search);
+  var chosen = PLANS[params.get('plan')] ? params.get('plan') : 'pro';
+  var mode = params.get('renew') ? 'renew' : 'buy';
+  var bonusDays = 30, refOk = '';
+  var inr = function (n) { return '₹' + Number(n).toLocaleString('en-IN'); };
+  var forKey = function () { return $('keyBox').checked; };
+
+  function renderPlans() {
+    var box = $('plans'); box.innerHTML = '';
+    ORDER.forEach(function (id) {
+      var p = PLANS[id];
+      var lab = document.createElement('label'); lab.className = 'card choice';
+      var r = document.createElement('input'); r.type = 'radio'; r.name = 'plan'; r.value = id; r.checked = id === chosen;
+      r.onchange = function () { chosen = id; update(); };
+      var txt = document.createElement('div');
+      var t = document.createElement('div'); t.style.fontWeight = '700';
+      t.textContent = p.label + ' — ' + inr(p.price) + ' one-time';
+      if (p.mrp > p.price) { var sx = document.createElement('s'); sx.className = 'muted'; sx.style.fontWeight = '400'; sx.style.marginLeft = '6px'; sx.textContent = inr(p.mrp); t.appendChild(sx); }
+      var n = document.createElement('div'); n.className = 'muted'; n.style.fontSize = '.9rem';
+      n.textContent = 'Pay once · includes 1 year of online services, then ' + inr(p.services) + '/year — optional · ' + p.note;
+      txt.appendChild(t); txt.appendChild(n); lab.appendChild(r); lab.appendChild(txt); box.appendChild(lab);
+    });
+  }
+  function renderServices() {
+    $('svPrices').textContent = 'Dukaan ' + inr(SERVICES.standard) + ' · Restaurant ' + inr(SERVICES.pro) + ' · Restaurant + Desktop ' + inr(SERVICES.combo) + ' · older Lifetime keys ' + inr(SERVICES.lifetime) + ' — a year.';
+  }
+  function payLabel() { return mode === 'renew' ? 'Renew online services' : 'Pay ' + inr(PLANS[chosen].price) + ' once'; }
+  function update() {
+    document.querySelectorAll('[data-mode]').forEach(function (b) { var on = b.getAttribute('data-mode') === mode; b.className = on ? 'btn' : 'btn ghost'; b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    $('buyBox').hidden = mode !== 'buy';
+    $('renewBox').hidden = mode !== 'renew';
+    $('keyRow').hidden = !forKey();
+    $('refRow').hidden = mode !== 'buy';
+    $('payBtn').textContent = payLabel();
+  }
+  document.querySelectorAll('[data-mode]').forEach(function (b) { b.onclick = function () { mode = b.getAttribute('data-mode'); $('err').hidden = true; update(); }; });
+  $('keyBox').onchange = update;
+
+  function showErr(msg, paymentId) {
+    var e = $('err'); e.hidden = false; e.textContent = msg + ' ';
+    var a = document.createElement('a');
+    a.href = waUrl('Hi RasoiOne, problem with ' + (mode === 'renew' ? 'online services renewal' : chosen + ' licence') + (paymentId ? ' — payment id ' + paymentId : '') + ': ' + msg);
+    a.target = '_blank'; a.textContent = 'Get help on WhatsApp'; e.appendChild(a);
+  }
+  function busy(on) { $('payBtn').disabled = on; $('payBtn').textContent = on ? 'Please wait…' : payLabel(); }
+  function licenceApi(body) {
+    return fetch(C.licenseApi, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body), redirect: 'follow' }).then(function (r) { return r.json(); });
+  }
+  function loadScript(src) {
+    return new Promise(function (ok, fail) { if (window.Razorpay) return ok(); var sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = fail; document.head.appendChild(sc); });
+  }
+
+  var refTimer;
+  function checkRef() {
+    var v = $('refCode').value.trim().toUpperCase();
+    refOk = ''; $('refMsg').textContent = ''; clearTimeout(refTimer);
+    if (v.length < 4 || !C.licenseApi) return;
+    refTimer = setTimeout(function () {
+      licenceApi({ action: 'checkRef', ref: v }).then(function (r) {
+        if ($('refCode').value.trim().toUpperCase() !== v) return;
+        if (r && r.success) { refOk = r.code; $('refMsg').textContent = '✓ ' + (r.bonusDays || bonusDays) + ' extra days of online services' + (r.name ? ' · referred by ' + r.name : ''); $('refMsg').style.color = '#15803d'; }
+        else { $('refMsg').textContent = 'This code is not valid.'; $('refMsg').style.color = '#b91c1c'; }
+      }).catch(function () { $('refMsg').textContent = 'Could not check the code right now.'; });
+    }, 350);
+  }
+  $('refCode').oninput = checkRef;
+  if (params.get('ref')) { $('refCode').value = params.get('ref').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12); checkRef(); }
+  if (params.get('key')) {
+    var k = params.get('key');
+    if (mode === 'renew') $('svKey').value = k; else { $('keyBox').checked = true; $('licKey').value = k; }
+  }
+
+  if (C.licenseApi) {
+    licenceApi({ action: 'plans' }).then(function (res) {
+      if (!res || !res.success || !res.plans) return;
+      Object.keys(res.plans).forEach(function (id) {
+        if (!PLANS[id]) return; var p = res.plans[id];
+        ['price', 'mrp', 'services'].forEach(function (k) { if (typeof p[k] === 'number') PLANS[id][k] = p[k]; });
+      });
+      var sv = res.services || res.maint;
+      if (sv) Object.keys(sv).forEach(function (k) { if (typeof sv[k] === 'number') SERVICES[k] = sv[k]; });
+      if (typeof res.referralBonusDays === 'number') { bonusDays = res.referralBonusDays; $('refAmt').textContent = bonusDays; }
+      renderPlans(); renderServices(); update();
+    }).catch(function () { /* keep defaults */ });
+  }
+
+  function start(plan, key) {
+    $('err').hidden = true;
+    var name = $('name').value.trim(), phone = $('phone').value.replace(/[^\d+]/g, ''), email = $('email').value.trim();
+    if (!name) return showErr('Please enter your shop name.');
+    if (phone.replace(/\D/g, '').length < 10) return showErr('Please enter a valid mobile number.');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr('Please enter a valid email.');
+    if (!C.licenseApi) return showErr('Online payment is not set up yet. Please contact us on WhatsApp.');
+    if ((plan === 'maint' || forKey()) && key.length < 6) return showErr('Please enter your licence key.');
+    busy(true);
+    var st;
+    // The server decides the price (and, for a key, whether the referral code still applies).
+    licenceApi({ action: 'createOrder', plan: plan, key: key, ref: plan === 'maint' ? '' : refOk, name: name, phone: phone, email: email }).then(function (res) {
+      if (!res || !res.success) throw new Error((res && res.error) || 'Could not start the payment.');
+      st = res; return loadScript('https://checkout.razorpay.com/v1/checkout.js');
+    }).then(function () {
+      var opts = {
+        key: st.keyId, name: 'RasoiOne',
+        description: plan === 'maint' ? 'Online services · 1 year' + (st.planLabel ? ' · ' + st.planLabel : '') : PLANS[plan].label + ' · one-time licence',
+        order_id: st.orderId, amount: Math.round(Number(st.amount) * 100), currency: st.currency || 'INR',
+        prefill: { name: name, email: email, contact: phone }, theme: { color: '#b45309' },
+        modal: { ondismiss: function () { busy(false); showErr('Payment cancelled. No money was taken. You can try again.'); } },
+        handler: function (resp) {
+          var verify = { action: 'verifyPayment', orderId: resp.razorpay_order_id, paymentId: resp.razorpay_payment_id, signature: resp.razorpay_signature, name: name, phone: phone, email: email };
+          savePending(verify);
+          $('payBtn').textContent = 'Confirming payment…';
+          licenceApi(verify).then(function (v) {
+            if (!v || !v.success) throw new Error((v && v.error) || 'Payment verification failed.');
+            clearPending(); showKey(v, resp.razorpay_payment_id, !!key);
+          }).catch(function (e) {
+            busy(false);
+            showErr('Payment received but not confirmed yet (' + e.message + '). Do not pay again. Keep this page open or come back to it: your key appears here by itself. Payment id: ' + resp.razorpay_payment_id + '.', resp.razorpay_payment_id);
+            retryLater();
+          });
+        },
+      };
+      var rzp = new window.Razorpay(opts);
+      rzp.on('payment.failed', function (r) {
+        busy(false);
+        var pid = r && r.error && r.error.metadata ? r.error.metadata.payment_id : '';
+        showErr('Payment failed: ' + ((r && r.error && r.error.description) || 'please try again') + (pid ? ' (payment id ' + pid + ')' : ''), pid);
+      });
+      rzp.open();
+    }).catch(function (e) {
+      busy(false);
+      showErr(e && e.message && e.message !== 'Failed to fetch' ? e.message : 'Could not connect. Check your internet and try again.');
+    });
+  }
+  $('payBtn').onclick = function () {
+    if (mode === 'renew') start('maint', $('svKey').value.trim());
+    else start(chosen, forKey() ? $('licKey').value.trim() : '');
+  };
+
+  function showKey(v, paymentId, existingKey) {
+    $('buyForm').hidden = true; $('done').hidden = false;
+    $('theKey').textContent = v.key; $('payId').textContent = paymentId;
+    var services = v.addon === 'maint';
+    $('doneTitle').textContent = services ? '🎉 Online services renewed' : existingKey ? '🎉 Licence bought for your key' : '🎉 Payment successful';
+    $('stepNew').hidden = existingKey || services; $('stepRenew').hidden = !(existingKey || services);
+    var f = function (d) { return new Date(d).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }); };
+    $('untilLine').textContent = (services ? '' : 'Your licence never ends. ') + (v.maintUntil ? 'Online services till ' + f(v.maintUntil) + '.' : '');
+    if (v.refCode && !existingKey && !services) { $('refLine').hidden = false; $('myRef').textContent = v.refCode; }
+    $('copyBtn').onclick = function () {
+      var done = function () { $('copyBtn').textContent = 'Copied ✓'; };
+      if (navigator.clipboard) navigator.clipboard.writeText(v.key).then(done, function () { prompt('Copy your key:', v.key); });
+      else prompt('Copy your key:', v.key);
+    };
+    window.scrollTo(0, 0);
+  }
+
+  // A payment whose confirmation did not get through is kept in this browser and retried.
+  function savePending(v) { try { localStorage.setItem('rasoi_pending', JSON.stringify(v)); } catch (e) { /* private mode */ } }
+  function clearPending() { try { localStorage.removeItem('rasoi_pending'); } catch (e) { /* ignore */ } }
+  function readPending() { try { return JSON.parse(localStorage.getItem('rasoi_pending') || 'null'); } catch (e) { return null; } }
+  var retryTimer;
+  function retryLater() {
+    var p = readPending();
+    if (!p || !C.licenseApi) return;
+    clearTimeout(retryTimer);
+    retryTimer = setTimeout(function () {
+      licenceApi(p).then(function (v) {
+        if (v && v.success) { clearPending(); showKey(v, p.paymentId, !!v.renewed); }
+        else if (v && /verification failed/i.test(v.error || '')) clearPending();
+        else retryLater();
+      }).catch(retryLater);
+    }, 8000);
+  }
+  if (readPending()) { $('err').hidden = false; $('err').textContent = 'Confirming your earlier payment… keep this page open.'; retryLater(); }
+
+  renderPlans(); renderServices(); update();
+})();
+</script>
+</body>
+</html>

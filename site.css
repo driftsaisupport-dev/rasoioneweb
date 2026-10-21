@@ -1,0 +1,65 @@
+/* RasoiOne website — shared stylesheet for buy and legal pages (the homepage uses home.css). Same palette and fonts as the app. */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Mukta:wght@400;600;700&display=swap');
+:root {
+  --bg: #EEF1F5; --card: #ffffff; --text: #141833; --muted: #4A5070; --line: #D6DCE6;
+  --brand: #F4511E; --brand-ink: #ffffff; --brand-soft: #FDE6DD; --ok: #0E9F57; --bad: #C62828; --wa: #1DA851;
+  --shadow: 0 1px 2px rgba(20, 24, 51, .06), 0 8px 24px rgba(20, 24, 51, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0F1224; --card: #181C34; --text: #F1F3FA; --muted: #B7BCD3; --line: #2A2F4C;
+    --brand: #FF7043; --brand-ink: #ffffff; --brand-soft: #3A1E17; --ok: #34D399; --bad: #F87171; --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 "Mukta", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--brand); }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+.narrow { max-width: 760px; }
+nav.site { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+nav.site .logo { font-weight: 800; font-size: 1.25rem; color: var(--text); text-decoration: none; }
+nav.site .logo span { color: var(--brand); }
+nav.site .links { display: flex; gap: 16px; flex-wrap: wrap; font-size: .95rem; }
+nav.site .links a { color: var(--text); text-decoration: none; }
+.hero { padding: 36px 0 20px; }
+.hero h1 { font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.15; margin: 0 0 12px; letter-spacing: -.01em; }
+.hero p.lead { font-size: 1.15rem; color: var(--muted); max-width: 640px; margin: 0 0 22px; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-block; padding: 12px 20px; border-radius: 12px; background: var(--brand); color: var(--brand-ink); font-weight: 700; text-decoration: none; border: 0; font-size: 1rem; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+.btn.wa { background: var(--wa); color: #fff; }
+.btn[disabled] { opacity: .6; cursor: default; }
+section { padding: 26px 0; }
+h2 { font-size: 1.5rem; margin: 0 0 14px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); }
+.card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+.card p { margin: 0; color: var(--muted); font-size: .95rem; }
+.plan { display: flex; flex-direction: column; gap: 8px; }
+.plan .price { font-size: 1.8rem; font-weight: 800; }
+.plan .price s { font-size: 1rem; color: var(--muted); font-weight: 400; margin-left: 6px; }
+.plan .price small { font-size: .9rem; font-weight: 400; color: var(--muted); }
+.plan ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: .93rem; }
+.plan.best { border: 2px solid var(--brand); }
+.badge { display: inline-block; align-self: flex-start; font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--brand-soft); color: var(--text); }
+footer.site { border-top: 1px solid var(--line); margin-top: 30px; padding: 20px 0 30px; color: var(--muted); font-size: .9rem; }
+footer.site a { color: var(--muted); margin-right: 14px; }
+.doc h1 { font-size: 2rem; margin: 20px 0 4px; }
+.doc .eff { color: var(--muted); margin: 0 0 20px; }
+.doc h2 { font-size: 1.25rem; margin: 26px 0 8px; }
+.doc li { margin: 4px 0; }
+.box { background: var(--brand-soft); border-radius: 12px; padding: 12px 16px; }
+label { display: block; font-weight: 600; margin: 14px 0 4px; font-size: .95rem; }
+label small { font-weight: 400; color: var(--muted); }
+input.field, select.field { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text); font: inherit; }
+.choice { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; margin: 0 0 10px; font-weight: 400; }
+.choice input { margin-top: 6px; accent-color: var(--brand); }
+.err { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: rgba(185, 28, 28, .1); color: var(--bad); }
+.success { text-align: center; }
+.keybox { font: 700 1.5rem/1.3 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; letter-spacing: .05em; padding: 16px; border-radius: 12px; border: 2px dashed var(--brand); background: var(--card); word-break: break-all; margin: 12px 0; }
+ol.steps li { margin: 6px 0; }
+.muted { color: var(--muted); }
+
+h1, h2, nav.site .logo, .btn { font-family: "Baloo 2", "Mukta", system-ui, sans-serif; }

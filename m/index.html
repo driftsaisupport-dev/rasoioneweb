@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c2410c">
+<meta name="robots" content="noindex">
+<title>Menu</title>
+<!--
+  RasoiOne table menu. The whole menu is inside the QR link after "#", so:
+   • this page never sends anything anywhere (no server, no API, no tracking);
+   • the shop's menu is never stored online;
+   • it costs ₹0 whether 10 or 1 crore people scan.
+  The customer picks items and shows an Order QR to the waiter, who scans it with RasoiOne.
+-->
+<style>
+  :root {
+    --bg: #fbf8f4; --card: #ffffff; --text: #1d1915; --muted: #6d6257; --line: #ece3d8;
+    --brand: #c2410c; --brand-ink: #ffffff; --brand-soft: #fdebdc; --ok: #15803d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #14110e; --card: #1f1a16; --text: #f6efe7; --muted: #b9ab9b; --line: #352d25; --brand: #fb923c; --brand-ink: #1a0f06; --brand-soft: #3b2414; --ok: #4ade80; }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; border: 0; background: none; -webkit-tap-highlight-color: transparent; }
+  .wrap { max-width: 640px; margin: 0 auto; padding-inline: 16px; }
+  header { padding-block: calc(18px + env(safe-area-inset-top, 0px)) 6px; display: grid; gap: 6px; }
+  h1 { margin: 0; font-size: 1.5rem; line-height: 1.2; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; color: var(--muted); font-size: .92rem; }
+  .pill { padding: 3px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--text); font-weight: 600; font-size: .85rem; }
+  .lang { margin-left: auto; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: .85rem; background: var(--card); }
+  .offers { padding: 10px 12px; border: 1px dashed var(--brand); border-radius: 12px; background: var(--brand-soft); font-size: .92rem; }
+  .offers p { margin: 2px 0; }
+  .parts { padding: 8px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: .9rem; color: var(--muted); }
+  .bar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding-block: 8px 6px; border-bottom: 1px solid var(--line); }
+  .search { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding-top: 8px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); font-size: .9rem; white-space: nowrap; }
+  .chip.on { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+  h2 { font-size: 1.02rem; margin: 18px 0 6px; }
+  .item { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; padding: 12px; margin: 8px 0; background: var(--card); border-radius: 14px; border: 1px solid var(--line); }
+  .name { font-weight: 600; overflow-wrap: anywhere; }
+  .price { color: var(--muted); font-size: .92rem; }
+  .vars { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; }
+  .vbox { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 4px 4px 4px 10px; font-size: .9rem; }
+  .add { min-width: 74px; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--brand); color: var(--brand); font-weight: 700; background: var(--card); }
+  .step { display: inline-flex; align-items: center; border-radius: 10px; background: var(--brand); color: var(--brand-ink); font-weight: 700; }
+  .step button { color: var(--brand-ink); width: 34px; height: 36px; font-size: 1.2rem; }
+  .step span { min-width: 22px; text-align: center; }
+  .cart { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(transparent, var(--bg) 30%); }
+  .cart button { width: 100%; max-width: 608px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-radius: 14px; background: var(--brand); color: var(--brand-ink); font-weight: 700; font-size: 1.02rem; }
+  .sheet { position: fixed; inset: 0; background: var(--bg); z-index: 10; overflow-y: auto; }
+  .sheet .wrap { padding-block: calc(16px + env(safe-area-inset-top, 0px)) 40px; display: grid; gap: 12px; }
+  .lines { background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+  .lines div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .lines div:first-child { border-top: 0; }
+  .total { font-weight: 800; }
+  label { display: grid; gap: 4px; font-size: .9rem; color: var(--muted); }
+  input, textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  .big { padding: 14px 18px; border-radius: 14px; background: var(--brand); color: var(--brand-ink); font-weight: 800; font-size: 1.05rem; }
+  .ghost { padding: 12px 18px; border-radius: 14px; border: 1.5px solid var(--line); font-weight: 600; }
+  .qrbox { background: #fff; border-radius: 16px; padding: 16px; display: grid; place-items: center; }
+  .qrbox img, .qrbox svg { width: min(78vw, 320px); height: auto; image-rendering: pixelated; }
+  .center { text-align: center; }
+  .note { color: var(--muted); font-size: .88rem; }
+  .err { padding: 40px 16px; text-align: center; color: var(--muted); }
+  footer { color: var(--muted); font-size: .8rem; text-align: center; padding: 24px 16px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<div id="app"><div class="err">Loading menu…</div></div>
+<script src="./pako_inflate.min.js"></script>
+<script src="./qrcode.js"></script>
+<script type="module">
+import { createCodec, parseMenuHash, encodeOrder } from './codec.js';
+
+const T = {
+  en: { parcel: 'Parcel / counter', table: 'Table', search: 'Search dishes', all: 'All', add: 'Add', items: 'items', view: 'View order', order: 'Your order', name: 'Your name (optional)', note: 'Note for kitchen (optional)', show: 'Show order to waiter', back: 'Add more', edit: 'Change order', waiter: 'Show this to the waiter', waiterSub: 'The waiter scans this code with RasoiOne. Your order goes straight into the bill.', est: 'Estimated total', estNote: 'Prices and offers are checked at the counter. Pay at the counter.', offers: 'Offers (applied at the counter)', parts: (a, b) => `Menu part ${a} of ${b}. Scan the other QR code on your table to see more dishes.`, bad: 'This menu QR could not be read. Please scan again, or ask the staff.', clear: 'Clear order', empty: 'Nothing here.', made: 'Menu by RasoiOne · no app needed · nothing you pick leaves your phone' },
+  hi: { parcel: 'पार्सल / काउंटर', table: 'टेबल', search: 'डिश खोजें', all: 'सब', add: 'जोड़ें', items: 'आइटम', view: 'ऑर्डर देखें', order: 'आपका ऑर्डर', name: 'आपका नाम (वैकल्पिक)', note: 'किचन के लिए नोट (वैकल्पिक)', show: 'वेटर को ऑर्डर दिखाएँ', back: 'और जोड़ें', edit: 'ऑर्डर बदलें', waiter: 'यह वेटर को दिखाएँ', waiterSub: 'वेटर RasoiOne से यह कोड स्कैन करेगा। आपका ऑर्डर सीधे बिल में जाएगा।', est: 'अनुमानित कुल', estNote: 'दाम और ऑफ़र काउंटर पर जाँचे जाते हैं। भुगतान काउंटर पर करें।', offers: 'ऑफ़र (काउंटर पर लागू)', parts: (a, b) => `मेन्यू भाग ${a} / ${b}. और डिश देखने के लिए टेबल पर दूसरा QR स्कैन करें।`, bad: 'यह मेन्यू QR पढ़ा नहीं जा सका। फिर से स्कैन करें या स्टाफ़ से पूछें।', clear: 'ऑर्डर हटाएँ', empty: 'कुछ नहीं मिला।', made: 'RasoiOne मेन्यू · कोई ऐप नहीं चाहिए · आपकी पसंद आपके फ़ोन से बाहर नहीं जाती' },
+};
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } } };
+let lang = store.get('rasoi.lang', (navigator.language || '').startsWith('hi') ? 'hi' : 'en');
+const t = (k, ...a) => { const v = T[lang][k] ?? T.en[k]; return typeof v === 'function' ? v(...a) : v; };
+const rs = (n) => '₹' + (Math.round(n * 100) / 100).toLocaleString('en-IN');
+const h = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) { if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else if (v !== false && v != null) e.setAttribute(k, v === true ? '' : v); }
+  for (const c of kids.flat(Infinity)) if (c != null && c !== false && c !== "") e.append(c.nodeType ? c : String(c));
+  return e;
+};
+
+const codec = createCodec(window.pako);
+const link = parseMenuHash(location.hash);
+let menu = null;
+try { menu = codec.decodeMenu(link.data); } catch (e) { document.getElementById('app').replaceChildren(h('div', { class: 'err' }, t('bad'))); throw e; }
+document.title = menu.name ? `${menu.name} · Menu` : 'Menu';
+
+// Big menus come in parts (one QR each). Remember every part scanned at this shop so the customer sees them together.
+const pk = `rasoi.parts.${menu.tag || menu.name}`;
+const parts = store.get(pk, {});
+parts[link.part] = link.data; store.set(pk, parts);
+const merged = [];
+for (const p of Object.keys(parts).sort()) {
+  try { for (const c of codec.decodeMenu(parts[p]).categories) merged.push(c); } catch { /* an old part from a changed menu */ }
+}
+const byId = new Map();
+const cats = [];
+for (const c of merged) {
+  const items = c.items.filter((i) => !byId.has(i.id));
+  items.forEach((i) => byId.set(i.id, i));
+  const same = cats.find((x) => x.name === c.name);
+  if (same) same.items.push(...items); else if (items.length) cats.push({ name: c.name, items: [...items] });
+}
+const ck = `rasoi.cart.${menu.tag || menu.name}.${link.table}`;
+let cart = store.get(ck, {}); // key "id:variantIndex" → qty
+let cat = 'all';
+let query = '';
+const save = () => store.set(ck, cart);
+const keyOf = (id, v) => `${id}:${v}`;
+const priceOf = (it, v) => (v >= 0 && it.variants[v] ? it.variants[v].price : it.price);
+
+function lines() {
+  return Object.entries(cart).filter(([, q]) => q > 0).map(([k, qty]) => {
+    const [id, v] = k.split(':').map(Number);
+    const it = byId.get(id);
+    return it ? { id, variant: v, qty, name: v >= 0 && it.variants[v] ? `${it.name} (${it.variants[v].name})` : it.name, price: priceOf(it, v) } : null;
+  }).filter(Boolean);
+}
+function setQty(id, v, q) { const k = keyOf(id, v); if (q > 0) cart[k] = Math.min(50, q); else delete cart[k]; save(); render(); }
+
+function stepper(id, v) {
+  const q = cart[keyOf(id, v)] || 0;
+  if (!q) return h('button', { class: 'add', onclick: () => setQty(id, v, 1), 'aria-label': `${t('add')}` }, t('add'));
+  return h('span', { class: 'step' }, h('button', { onclick: () => setQty(id, v, q - 1), 'aria-label': '−' }, '−'), h('span', {}, q), h('button', { onclick: () => setQty(id, v, q + 1), 'aria-label': '+' }, '+'));
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const q = query.trim().toLowerCase();
+  const shown = cats.map((c) => ({ ...c, items: c.items.filter((i) => !q || i.name.toLowerCase().includes(q)) })).filter((c) => (cat === 'all' || c.name === cat) && c.items.length);
+  const ls = lines();
+  const count = ls.reduce((a, l) => a + l.qty, 0);
+  const total = ls.reduce((a, l) => a + l.qty * l.price, 0);
+  app.replaceChildren(
+    h('div', { class: 'wrap' },
+      h('header', {},
+        h('div', { class: 'row' }, h('span', { class: 'pill' }, link.table ? `${t('table')} ${link.table}` : t('parcel')),
+          h('button', { class: 'lang', onclick: () => { lang = lang === 'en' ? 'hi' : 'en'; store.set('rasoi.lang', lang); render(); } }, lang === 'en' ? 'हिंदी' : 'English')),
+        h('h1', {}, menu.name || 'Menu'),
+        menu.offers.length ? h('div', { class: 'offers' }, h('b', {}, '🎁 ' + t('offers')), menu.offers.map((o) => h('p', {}, o))) : null,
+        link.of > 1 ? h('div', { class: 'parts' }, t('parts', link.part, link.of)) : null),
+      h('div', { class: 'bar' },
+        h('input', { class: 'search', id: 'q', type: 'search', placeholder: t('search'), value: query, oninput: (e) => { query = e.target.value; render(); document.getElementById('q').focus(); } }),
+        h('div', { class: 'chips' }, ['all', ...cats.map((c) => c.name)].map((c) => h('button', { class: 'chip' + (cat === c ? ' on' : ''), onclick: () => { cat = c; render(); } }, c === 'all' ? t('all') : c)))),
+      shown.length ? shown.map((c) => [h('h2', {}, c.name), c.items.map((it) => h('div', { class: 'item' },
+        h('div', {}, h('div', { class: 'name' }, it.name), h('div', { class: 'price' }, it.variants.length ? it.variants.map((v) => `${v.name} ${rs(v.price)}`).join(' · ') : rs(it.price) + (it.kg ? ' / kg' : ''))),
+        it.variants.length ? null : h('div', {}, stepper(it.id, -1)),
+        it.variants.length ? h('div', { class: 'vars' }, it.variants.map((v, i) => h('span', { class: 'vbox' }, v.name, stepper(it.id, i)))) : null))])
+        : h('p', { class: 'note' }, t('empty')),
+      h('footer', {}, t('made'))),
+    count ? h('div', { class: 'cart' }, h('button', { onclick: review }, h('span', {}, `${count} ${t('items')}`), h('span', {}, `${t('view')} · ${rs(total)}`))) : '',
+  );
+}
+
+function review() {
+  const ls = lines();
+  const total = ls.reduce((a, l) => a + l.qty * l.price, 0);
+  const name = h('input', { id: 'nm', maxlength: 30, value: store.get('rasoi.name', ''), autocomplete: 'given-name' });
+  const note = h('textarea', { id: 'nt', rows: 2, maxlength: 120 });
+  const sheet = h('div', { class: 'sheet' }, h('div', { class: 'wrap' },
+    h('h1', {}, t('order')),
+    h('div', { class: 'lines' }, ls.map((l) => h('div', {}, h('span', {}, `${l.qty} × ${l.name}`), h('span', {}, rs(l.qty * l.price)))), h('div', { class: 'total' }, h('span', {}, t('est')), h('span', {}, rs(total)))),
+    h('label', { for: 'nm' }, t('name'), name),
+    h('label', { for: 'nt' }, t('note'), note),
+    h('button', { class: 'big', onclick: () => { store.set('rasoi.name', name.value); showQr(name.value, note.value); } }, t('show')),
+    h('button', { class: 'ghost', onclick: () => sheet.remove() }, t('back')),
+    h('p', { class: 'note center' }, t('estNote'))));
+  document.body.append(sheet);
+}
+
+function showQr(name, note) {
+  const ls = lines();
+  const text = encodeOrder({ tag: menu.tag, table: link.table, lines: ls.map((l) => ({ id: l.id, qty: l.qty, variant: l.variant })), name, note });
+  const qr = window.qrcode(0, 'M'); qr.addData(text); qr.make();
+  const box = h('div', { class: 'qrbox' }); box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+  const total = ls.reduce((a, l) => a + l.qty * l.price, 0);
+  try { navigator.wakeLock?.request('screen').catch(() => {}); } catch { /* not supported */ }
+  const sheet = h('div', { class: 'sheet' }, h('div', { class: 'wrap' },
+    h('h1', { class: 'center' }, t('waiter')),
+    box,
+    h('p', { class: 'center note' }, t('waiterSub')),
+    h('div', { class: 'lines' }, ls.map((l) => h('div', {}, h('span', {}, `${l.qty} × ${l.name}`), h('span', {}, rs(l.qty * l.price)))), h('div', { class: 'total' }, h('span', {}, `${link.table ? t('table') + ' ' + link.table : t('parcel')} · ${t('est')}`), h('span', {}, rs(total)))),
+    h('button', { class: 'ghost', onclick: () => { document.querySelectorAll('.sheet').forEach((s) => s.remove()); } }, t('edit')),
+    h('button', { class: 'ghost', onclick: () => { cart = {}; save(); document.querySelectorAll('.sheet').forEach((s) => s.remove()); render(); } }, t('clear'))));
+  document.body.append(sheet);
+}
+
+render();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+window.addEventListener('hashchange', () => location.reload());
+</script>
+</body>
+</html>

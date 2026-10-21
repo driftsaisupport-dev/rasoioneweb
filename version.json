@@ -1,0 +1,9 @@
+{
+  "version": "5.4.0",
+  "buildCode": 18,
+  "minRequired": "1.0.0",
+  "releaseDate": "2026-10-20",
+  "notes": "Staff mode with owner PIN, activity log, hold a bill, move or join tables, card payments, suppliers, stock history, menu import/export, price change by %. Bill round-off line and stock fixes.",
+  "downloadUrl": "https://rasoione.shop",
+  "forceUpdate": false
+}
