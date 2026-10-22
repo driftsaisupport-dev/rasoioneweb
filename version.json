@@ -1,9 +1,9 @@
 {
-  "version": "5.4.0",
-  "buildCode": 18,
+  "version": "5.5.0",
+  "buildCode": 19,
   "minRequired": "1.0.0",
-  "releaseDate": "2026-10-20",
-  "notes": "Staff mode with owner PIN, activity log, hold a bill, move or join tables, card payments, suppliers, stock history, menu import/export, price change by %. Bill round-off line and stock fixes.",
+  "releaseDate": "2026-10-22",
+  "notes": "Inventory for every shop, WhatsApp marketing (order link, Status posts, festival wishes), Google review QR on bills, daily Google Drive backup, clearer printing on small printers.",
   "downloadUrl": "https://rasoione.shop",
   "forceUpdate": false
 }
