@@ -13,9 +13,13 @@
  * ORDER QR (no WhatsApp, no internet needed to send):
  *   The customer picks items on that page; the page shows an Order QR on their screen.
  *   The waiter scans it with RasoiOne (phone camera, or a USB scanner on the computer) → exact bill.
- *     RO2|<shopTag>|<table>|<itemId>:<qty>[:<variantIndex>],…|<name>|<note>
+ *     RO3|<shopTag>|<table>|<itemId>:<qty>[:<variantName>],…|<name>|<note>
  *   The order is physically shown to staff, so nobody outside the shop can place or change an order,
  *   and the app always uses its OWN prices.
+ *   The variant travels by NAME, not by its position in the list (D8): the customer's page can be
+ *   showing a menu snapshot from whenever that table's QR was last printed, so if the owner has since
+ *   reordered or removed a variant, a position would silently resolve to the wrong one. A name that no
+ *   longer exists on the live menu is instead flagged by the app so staff can ask, rather than guess.
  *
  * Plain JavaScript, no imports: the caller passes in pako (deflate library).
  */
@@ -164,19 +168,27 @@ export function parseMenuHash(hash) {
 
 const clean = (s, n) => String(s || '').replace(/[|\n\r]/g, ' ').trim().slice(0, n);
 
-/** lines: [{ id, qty, variant: index or -1 }] */
+/** lines: [{ id, qty, variant: a variant name, or '' / -1 / undefined for none }] */
 export function encodeOrder({ tag = '', table = '', lines = [], name = '', note = '' }) {
-  const items = lines.filter((l) => Number(l.qty) > 0).map((l) => `${l.id}:${Number(l.qty)}${l.variant >= 0 ? `:${l.variant}` : ''}`).join(',');
-  return ['RO2', clean(tag, 12), clean(table, 12), items, clean(name, 30), clean(note, 120)].join('|');
+  const vname = (l) => (l.variant != null && l.variant !== -1 ? String(l.variant).trim() : '');
+  const items = lines.filter((l) => Number(l.qty) > 0).map((l) => {
+    const v = vname(l);
+    return `${l.id}:${Number(l.qty)}${v ? `:${encodeURIComponent(v)}` : ''}`;
+  }).join(',');
+  return ['RO3', clean(tag, 12), clean(table, 12), items, clean(name, 30), clean(note, 120)].join('|');
 }
 
+/** → lines: [{ id, qty, variantName: '' when none }]. A still-"RO2" (pre-5.6) scan is refused outright
+ *  rather than misread: its third field was a positional index under a different, incompatible scheme. */
 export function decodeOrder(text) {
   const s = String(text || '').trim();
-  if (!s.startsWith('RO2|')) return null;
+  if (!s.startsWith('RO3|')) return null;
   const [, tag, table, items, name, note] = s.split('|');
   const lines = String(items || '').split(',').filter(Boolean).map((x) => {
     const [id, qty, v] = x.split(':');
-    return { id: Number(id), qty: Number(qty), variant: v === undefined ? -1 : Number(v) };
+    let variantName = '';
+    if (v !== undefined) { try { variantName = decodeURIComponent(v); } catch { variantName = v; } }
+    return { id: Number(id), qty: Number(qty), variantName };
   }).filter((l) => l.id && l.qty > 0 && l.qty <= 99);
   return { tag: tag || '', table: table || '', lines, name: name || '', note: note || '' };
 }

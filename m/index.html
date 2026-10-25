@@ -103,7 +103,12 @@ document.title = menu.name ? `${menu.name} · Menu` : 'Menu';
 
 // Big menus come in parts (one QR each). Remember every part scanned at this shop so the customer sees them together.
 const pk = `rasoi.parts.${menu.tag || menu.name}`;
-const parts = store.get(pk, {});
+const ok = `rasoi.partsOf.${menu.tag || menu.name}`;
+let parts = store.get(pk, {});
+// The owner reprinted with a different number of parts (menu grew or shrank): drop the old parts
+// instead of merging a stale one in — otherwise a removed category could keep showing up forever.
+if (store.get(ok, null) !== link.of) parts = {};
+store.set(ok, link.of);
 parts[link.part] = link.data; store.set(pk, parts);
 const merged = [];
 for (const p of Object.keys(parts).sort()) {
@@ -129,7 +134,7 @@ function lines() {
   return Object.entries(cart).filter(([, q]) => q > 0).map(([k, qty]) => {
     const [id, v] = k.split(':').map(Number);
     const it = byId.get(id);
-    return it ? { id, variant: v, qty, name: v >= 0 && it.variants[v] ? `${it.name} (${it.variants[v].name})` : it.name, price: priceOf(it, v) } : null;
+    return it ? { id, variant: v, variantName: v >= 0 && it.variants[v] ? it.variants[v].name : '', qty, name: v >= 0 && it.variants[v] ? `${it.name} (${it.variants[v].name})` : it.name, price: priceOf(it, v) } : null;
   }).filter(Boolean);
 }
 function setQty(id, v, q) { const k = keyOf(id, v); if (q > 0) cart[k] = Math.min(50, q); else delete cart[k]; save(); render(); }
@@ -186,7 +191,7 @@ function review() {
 
 function showQr(name, note) {
   const ls = lines();
-  const text = encodeOrder({ tag: menu.tag, table: link.table, lines: ls.map((l) => ({ id: l.id, qty: l.qty, variant: l.variant })), name, note });
+  const text = encodeOrder({ tag: menu.tag, table: link.table, lines: ls.map((l) => ({ id: l.id, qty: l.qty, variant: l.variantName })), name, note });
   const qr = window.qrcode(0, 'M'); qr.addData(text); qr.make();
   const box = h('div', { class: 'qrbox' }); box.innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
   const total = ls.reduce((a, l) => a + l.qty * l.price, 0);
