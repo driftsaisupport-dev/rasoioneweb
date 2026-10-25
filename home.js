@@ -59,7 +59,7 @@
   // WhatsApp links
   var wa = String(cfg.supportWhatsApp || '').replace(/\D/g, '');
   $$('[data-wa]').forEach(function (a) {
-    if (wa.length < 11) { a.href = 'mailto:support@rasoione.shop'; return; }
+    if (wa.length < 11) { a.href = 'mailto:driftsai.support@gmail.com'; return; }
     a.href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent('Hi RasoiOne, I have a question');
     a.target = '_blank'; a.rel = 'noopener';
   });
