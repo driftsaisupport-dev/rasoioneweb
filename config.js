@@ -17,9 +17,9 @@ window.RASOI = {
   downloads: {
     version: "5.5.0",
     updated: "20 Oct 2026",
-    android: { drive: "", size: "≈ 60 MB" },   // RasoiOne-5.5.0.apk
-    windows: { drive: "", size: "≈ 110 MB" },  // RasoiOne-Setup-5.5.0.exe
-    mac:     { drive: "", size: "≈ 220 MB" },  // RasoiOne-5.5.0-mac.dmg
+    android: { drive: "https://drive.google.com/file/d/15Pp_7aFMs1g_Bgz-HdpwuUzLB-QJlrwh/view?usp=sharing", size: "≈ 60 MB" },   // RasoiOne-5.5.0.apk
+    windows: { drive: "https://drive.google.com/file/d/1tnvwy6Zc45zKJLAbP_E0j9f2b_9b_7N8/view?usp=sharing", size: "≈ 110 MB" },  // RasoiOne-Setup-5.5.0.exe
+    mac:     { drive: "https://drive.google.com/file/d/1Tc2_Hzwurn-O91nxr808AjphQdAJNfNB/view?usp=sharing", size: "≈ 220 MB" },  // RasoiOne-5.5.0-mac.dmg
     playStore: "",                             // Play Store link, once the listing is live
   },
 };

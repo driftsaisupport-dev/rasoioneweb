@@ -24,6 +24,14 @@ Vercel project → **Settings → Domains** → add `rasoione.shop` and `www.ras
 At your domain registrar set the DNS records Vercel shows (usually an **A** record `@ → 76.76.21.21`
 and a **CNAME** `www → cname.vercel-dns.com`). HTTPS is automatic.
 
+
+this is apk link:
+(https://drive.google.com/file/d/15Pp_7aFMs1g_Bgz-HdpwuUzLB-QJlrwh/view?usp=sharing)
+this is mac app
+(https://drive.google.com/file/d/1Tc2_Hzwurn-O91nxr808AjphQdAJNfNB/view?usp=sharing)
+this is windows app
+(https://drive.google.com/file/d/1tnvwy6Zc45zKJLAbP_E0j9f2b_9b_7N8/view?usp=sharing)
+
 ## Keep working
 - `/m/` is the table-QR menu page that printed QR codes open — never delete or rename it.
 - `/buy.html` needs `licenseApi` in `config.js` (your Apps Script `/exec` URL).
